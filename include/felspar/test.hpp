@@ -53,6 +53,9 @@ namespace felspar {
                     source_location loc = source_location::current()) const {
                 return checks<V>{std::forward<V>(v), std::move(loc)};
             }
+            auto operator()(
+                    bool const result,
+                    source_location loc = source_location::current()) const {}
         };
 
 
@@ -79,15 +82,33 @@ namespace felspar {
                 register_test(suite, name, t, loc);
                 return *this;
             }
+            auto
+                    test(test_function t,
+                         source_location loc = source_location::current()) {
+                register_test(suite, {}, t, loc);
+                return *this;
+            }
         };
 
 
     }
 
 
+    template<typename F>
+    concept test_function = requires(F f) {
+        f(detail::injected{});
+    };
+
+
     template<std::size_t N>
     inline auto testsuite(char const (&n)[N]) {
         return detail::s{n};
+    }
+    template<std::size_t N, test_function... Ts>
+    inline auto testsuite(char const (&n)[N], Ts &&... tests) {
+        detail::s suite{n};
+        (suite.test(tests), ...);
+        return suite;
     }
 
 
