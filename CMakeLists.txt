@@ -4,7 +4,7 @@ project(felspar-test)
 
 set(FELSPAR_CHECK_TESTS YES
     CACHE STRING "Turn off to stop tests from being built and run")
-if(${FELSPAR_CHECK_TESTS})
+if(${FELSPAR_CHECK_TESTS} AND NOT TARGET check)
     add_custom_target(check)
 endif()
 
