@@ -15,7 +15,7 @@ namespace felspar {
                 std::string_view,
                 std::string_view,
                 detail::test_function,
-                detail::source_location);
+                source_location);
 
         detail::test_function test;
 
@@ -23,7 +23,7 @@ namespace felspar {
                 std::string_view s,
                 std::string_view n,
                 detail::test_function f,
-                detail::source_location)
+                source_location)
         : test{f}, suite{s}, name{n} {}
 
       public:

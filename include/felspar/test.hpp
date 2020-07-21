@@ -1,14 +1,11 @@
 #pragma once
 
 
-#include <experimental/source_location>
-namespace felspar::detail {
-    using source_location = std::experimental::source_location;
-}
-
 #include <span>
 #include <string_view>
 #include <utility>
+
+#include <felspar/test/source.hpp>
 
 
 namespace felspar {
