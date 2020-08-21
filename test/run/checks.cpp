@@ -34,3 +34,9 @@ static auto const for_movable =
         felspar::testsuite("movable type").test([](auto check) {
             check(movable{}) == movable{};
         });
+
+
+void thrower() { throw std::runtime_error{"An exception"}; }
+auto const throws = felspar::testsuite("throws", [](auto check) {
+    check([]() { thrower(); }).throws(std::runtime_error{"An exception"});
+});
