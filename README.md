@@ -6,6 +6,9 @@ The test framework is currently at the pre-alpha "proof-of-concept" level and sh
 
 
 ```cpp
+#include <felspar/test.hpp>
+
+namespace {
 auto const vector = felspar::testsuite(
         "vector",
         [](auto check) { check(std::vector<int>{}.size()) == 0; },
@@ -24,6 +27,7 @@ auto const vector = felspar::testsuite(
                 ss.at(1);
             }).template throws_type<std::out_of_range>();
         });
+}
 ```
 
 To use add it as a sub-directory in your project and then just use `add_subdirectory`, or use:
