@@ -28,7 +28,12 @@ namespace felspar {
 
       public:
         std::string_view suite, name;
-        void operator()() const {}
+        std::exception_ptr operator()() const {
+            try {
+                test(detail::injected{});
+                return nullptr;
+            } catch (...) { return std::current_exception(); }
+        }
     };
     std::span<test_case const> all_test_cases();
 

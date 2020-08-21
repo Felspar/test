@@ -2,7 +2,9 @@
 
 
 #include <span>
+#include <string>
 #include <string_view>
+#include <sstream>
 #include <utility>
 
 #include <felspar/test/source.hpp>
@@ -14,6 +16,16 @@ namespace felspar {
     template<typename T>
     concept testable_value = requires(T t) {
         T{t};
+    };
+
+
+    class test_failure : public std::exception {
+        std::string message;
+
+      public:
+        test_failure(std::string m) : message{std::move(m)} {}
+
+        char const *what() const noexcept { return message.c_str(); }
     };
 
 
@@ -30,14 +42,24 @@ namespace felspar {
             checks(X &&v, source_location l)
             : value{std::forward<X>(v)}, source{std::move(l)} {}
 
+            template<typename C>
+            auto report(bool passed, std::string_view op, C &&c) const {
+                if (not passed) {
+                    std::stringstream m;
+                    m << op << " failed at " << source.file_name() << ":"
+                      << source.line() << ":" << source.column();
+                    throw test_failure{m.str()};
+                }
+            }
+
             /// All supported comparisons
             template<typename C>
-            void operator==(C &&c) const {
-                bool const result = (value == std::forward<C>(c));
+            auto operator==(C &&c) const {
+                return report(value == std::forward<C>(c), "==", std::move(c));
             }
             template<typename C>
-            void operator!=(C &&c) const {
-                bool const result = (value != std::forward<C>(c));
+            auto operator!=(C &&c) const {
+                return report(value != std::forward<C>(c), "!=", std::move(c));
             }
         };
 
@@ -70,8 +92,8 @@ namespace felspar {
             template<typename V>
             part(V v, source_location loc = source_location::current()) {}
         };
-        struct s {
-            char const *suite;
+        struct registration {
+            std::string_view const suite;
             auto
                     test(char const *name,
                          test_function t,
@@ -99,11 +121,11 @@ namespace felspar {
 
     template<std::size_t N>
     inline auto testsuite(char const (&n)[N]) {
-        return detail::s{n};
+        return detail::registration{n};
     }
     template<std::size_t N, test_function... Ts>
     inline auto testsuite(char const (&n)[N], Ts &&... tests) {
-        detail::s suite{n};
+        detail::registration suite{n};
         (suite.test(tests), ...);
         return suite;
     }
