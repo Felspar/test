@@ -94,16 +94,16 @@ namespace felspar {
         };
         struct registration {
             std::string_view const suite;
-            auto
-                    test(char const *name,
-                         test_function t,
-                         source_location loc = source_location::current()) {
+            auto test(
+                    char const *name,
+                    test_function t,
+                    source_location loc = source_location::current()) const {
                 register_test(suite, name, t, loc);
                 return *this;
             }
-            auto
-                    test(test_function t,
-                         source_location loc = source_location::current()) {
+            auto test(
+                    test_function t,
+                    source_location loc = source_location::current()) const {
                 register_test(suite, {}, t, loc);
                 return *this;
             }
