@@ -14,9 +14,7 @@ namespace felspar {
 
 
     template<typename T>
-    concept testable_value = requires(T t) {
-        T{std::declval<T>()};
-    };
+    concept testable_value = std::is_move_constructible_v<T>;
 
 
     class test_failure : public std::exception {
@@ -48,7 +46,7 @@ namespace felspar {
         template<typename V>
         struct checks {
             injected const &check;
-            V value;
+            std::remove_cv_t<V> value;
             source_location source;
 
             template<typename X>
@@ -82,6 +80,10 @@ namespace felspar {
                     return detail::report(true, "throws", source);
                 }
             }
+
+            auto is_truthy() const {
+                detail::report(value ? true : false, "is_truthy", source);
+            }
         };
 
 
@@ -92,11 +94,6 @@ namespace felspar {
                     V &&v,
                     source_location loc = source_location::current()) const {
                 return checks<V>{*this, std::forward<V>(v), std::move(loc)};
-            }
-            auto operator()(
-                    bool const result,
-                    source_location loc = source_location::current()) const {
-                report(result, "check", std::move(loc));
             }
             template<typename L>
             auto throws(L l, source_location loc = source_location::current())
