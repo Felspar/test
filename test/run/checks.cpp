@@ -22,3 +22,15 @@ static auto const binary =
                     check(1) != 2;
                     check(std::string{"hello"}) != "world";
                 });
+
+
+struct movable {
+    movable() {}
+    movable(movable const &) = delete;
+    movable(movable &&) {}
+    bool operator==(movable const &) const { return true; }
+};
+static auto const for_movable =
+        felspar::testsuite("movable type").test([](auto check) {
+            check(movable{}) == movable{};
+        });

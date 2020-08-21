@@ -15,7 +15,7 @@ namespace felspar {
 
     template<typename T>
     concept testable_value = requires(T t) {
-        T{t};
+        T{std::declval<T>()};
     };
 
 
