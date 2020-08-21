@@ -67,6 +67,12 @@ namespace {
                 check(items[2]) == 3;
                 check(items.back()) == 4;
                 check(items.begin()) == items.cbegin();
+            },
+            [](auto check) {
+                std::vector<std::string> ss;
+                check([&]() {
+                    ss.at(1);
+                }).template throws_type<std::out_of_range>();
             });
 
 
