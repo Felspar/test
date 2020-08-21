@@ -37,6 +37,15 @@ static auto const for_movable =
 
 
 void thrower() { throw std::runtime_error{"An exception"}; }
-auto const throws = felspar::testsuite("throws", [](auto check) {
-    check([]() { thrower(); }).throws(std::runtime_error{"An exception"});
-});
+auto const throws = felspar::testsuite(
+        "throws",
+        [](auto check) {
+            check([]() {
+                thrower();
+            }).throws(std::runtime_error{"An exception"});
+        },
+        [](auto check) {
+            check([]() {
+                thrower();
+            }).template throws_type<std::runtime_error>();
+        });

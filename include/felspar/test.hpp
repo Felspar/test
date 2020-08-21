@@ -73,6 +73,15 @@ namespace felspar {
             /// Other supported checks
             template<typename E>
             auto throws(E v) const;
+            template<typename E>
+            auto throws_type() const {
+                try {
+                    value();
+                    return detail::report(false, "throws", source);
+                } catch (E const &) {
+                    return detail::report(true, "throws", source);
+                }
+            }
         };
 
 
