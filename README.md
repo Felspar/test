@@ -4,6 +4,7 @@
 
 The test framework is currently at the pre-alpha "proof-of-concept" level and shows that we can now do testing properly without macros.
 
+The framework is easy to use from your `CMakeLists.txt` and tests can be run as part of your normal build with no extra steps needed.
 
 ```cpp
 #include <felspar/test.hpp>
@@ -30,7 +31,10 @@ auto const vector = felspar::testsuite(
 }
 ```
 
-To use add it as a sub-directory in your project and then just use `add_subdirectory`, or use:
+
+## CMake integration
+
+To use, add it as a sub-directory in your project and then just `add_subdirectory`, or use:
 
 ```cmake
 include(FetchContent)
@@ -67,3 +71,71 @@ add_test_run(check your-library test-helpers TESTS checks1.cpp checks2.cpp)
 ```
 
 Anything you add between the test target name and the `TESTS` word will be linked with the test executable.
+
+
+## Writing tests
+
+You can pass any number of test lambdas into the `testsuite` function and it will return a value that you store and acts as an anchor for the test runner to find and execute the tests.
+
+```cpp
+static auto const unary = felspar::testsuite(
+        "checks...unary",
+        [](auto check) { check(true); },
+        [](auto check) {
+            auto const *ptr = "";
+            check(ptr).is_truthy();
+            check(ptr != nullptr);
+        });
+```
+
+You can also use the `.test` member of the `testsuite` which also takes an optional test name:
+
+```cpp
+static auto const unary = felspar::testsuite("checks...unary")
+        .test([](auto check) { check(true); })
+        .test("truthy", [](auto check) {
+            auto const *ptr = "";
+            check(ptr).is_truthy();
+            check(ptr != nullptr);
+        });
+```
+
+Finally you can separate the tests. This is useful when creating macros to help with porting from other test suites:
+
+```cpp
+static auto const unary = felspar::testsuite("checks...unary");
+static auto const unary_1 = unary.test([](auto check) { check(true); });
+static auto const unary_truthy = unary.test("truthy", [](auto check) {
+        auto const *ptr = "";
+        check(ptr).is_truthy();
+        check(ptr != nullptr);
+    });
+```
+
+## Test operations
+
+The object injected into the tests (conventionally called `check`) is used as the basis of the assertions. Values can be wrapped and then compared (only `==` and `!=` are currently supported):
+
+```cpp
+check(some_value) == other_value;
+```
+
+Values can also be checked to ensure they will work correctly in conditional contexts:
+
+```cpp
+check(non_empty_optional).is_truthy();
+```
+
+Exceptions can be checked either by type or by value:
+
+```cpp
+check([]() {
+    something_that_throws();
+}).throws(std::runtime_error{"Argh!"});
+
+check([]() {
+    something_that_throws();
+}).template throws_type<std::runtime_error>();
+```
+
+The first form, `throws`, checks that an exception of the appropriate type will be thrown and that the `what()` string of the caught exception and the passed exception are the same. The second form, `throws_type` only checks that an exception can be caught using a guard of the provided type.
