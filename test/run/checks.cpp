@@ -30,15 +30,15 @@ namespace {
                     });
 
 
-    struct movable {
-        movable() {}
-        movable(movable const &) = delete;
-        movable(movable &&) {}
-        bool operator==(movable const &) const { return true; }
+    struct moveonly {
+        moveonly() {}
+        moveonly(moveonly const &) = delete;
+        moveonly(moveonly &&) {}
+        bool operator==(moveonly const &) const { return true; }
     };
     static auto const for_movable =
-            felspar::testsuite("movable type").test([](auto check) {
-                check(movable{}) == movable{};
+            felspar::testsuite("move only type").test([](auto check) {
+                check(moveonly{}) == moveonly{};
             });
 
 
