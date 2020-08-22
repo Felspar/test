@@ -7,6 +7,14 @@ executors:
     environment:
       CC: clang
       CXX: clang++
+  clang-libcpp:
+    docker:
+    - image: fost/circleci
+    environment:
+      CC: clang
+      CXX: clang++
+      CXXFLAGS: "-stdlib=libc++"
+      LD_FLAGS: "-stdlib=libc++"
   gcc:
     docker:
     - image: fost/circleci
@@ -44,7 +52,7 @@ workflows:
       - build:
           matrix:
             parameters:
-              compiler: [gcc, clang]
+              compiler: [gcc, clang, clang-libcpp]
               variant: [Debug, Release]
 
               
