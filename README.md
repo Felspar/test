@@ -145,10 +145,20 @@ check([]() {
 The first form, `throws`, checks that an exception of the appropriate type will be thrown and that the `what()` string of the caught exception and the passed exception are the same. The second form, `throws_type` only checks that an exception can be caught using a guard of the provided type.
 
 
+## Failure reporting
+
+If the types used in an expression are printable to a `std::ostream<char>` then this is used to generate a failure message. For example `check(4) != 4` could be reported as:
+
+    maths:7 ... FAIL :-(
+    != failed at ../../test/tests.cpp:69:0
+    4 != 4
+
+If the type doesn't support printing then it will be shown as `?? unprintable ??` instead.
+
+
 ## TODO
 
 * Move implementation around and tidy up names.
 * Implement the rest of the comparison operators, including spaceship.
-* Print useful values in failure reports if the type supports `stream <<`.
 * Report a failure if a `check` isn't done because `check(true);` does nothing.
 * Add `skip` and `fails` alongside the `test` registration function.

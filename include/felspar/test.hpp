@@ -16,6 +16,10 @@ namespace felspar {
     template<typename T>
     concept testable_value = std::is_move_constructible_v<T>;
 
+    template<typename T>
+    concept stream_printable = requires(T t, std::stringstream os) {
+        {os << t};
+    };
 
     class test_failure : public std::exception {
         std::string message;
@@ -38,6 +42,31 @@ namespace felspar {
                 throw test_failure{m.str()};
             }
         }
+        inline auto
+                report(bool passed,
+                       std::string_view op,
+                       source_location s,
+                       std::string_view vl,
+                       std::string_view vr) {
+            if (not passed) {
+                std::stringstream m;
+                m << op << " failed at " << s.file_name() << ":" << s.line()
+                  << ":" << s.column() << '\n'
+                  << vl << ' ' << op << ' ' << vr;
+                throw test_failure{m.str()};
+            }
+        }
+
+        template<typename V>
+        inline std::string_view value_string(V const &) {
+            return "?? unprintable ??";
+        }
+        template<stream_printable V>
+        inline auto value_string(V const &v) {
+            std::stringstream ss{};
+            ss << v;
+            return ss.str();
+        }
 
 
         struct injected;
@@ -53,19 +82,21 @@ namespace felspar {
             checks(injected const &c, X &&v, source_location l)
             : check{c}, value{std::forward<X>(v)}, source{std::move(l)} {}
 
-            template<typename C>
-            auto report(bool passed, std::string_view op, C &&) const {
-                return detail::report(passed, op, source);
+            auto report(bool passed, std::string_view op, std::string vr) const {
+                return detail::report(
+                        passed, op, source, value_string(value), std::move(vr));
             }
 
             /// All supported comparisons
             template<typename C>
             auto operator==(C &&c) const {
-                return report(value == std::forward<C>(c), "==", std::move(c));
+                auto cs = value_string(c);
+                return report(value == std::forward<C>(c), "==", std::move(cs));
             }
             template<typename C>
             auto operator!=(C &&c) const {
-                return report(value != std::forward<C>(c), "!=", std::move(c));
+                auto cs = value_string(c);
+                return report(value != std::forward<C>(c), "!=", std::move(cs));
             }
 
             /// Other supported checks
