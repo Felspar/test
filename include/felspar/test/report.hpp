@@ -11,43 +11,28 @@
 namespace felspar::test {
 
 
+    /**
+     * Generate a test failure report which will be used as the constructor
+     * message for the thrown exception. This function needs to be implemented
+     * by the test runner.
+     */
+    std::string format_failure_message(
+            std::string_view filename,
+            std::size_t line,
+            std::size_t column,
+            std::string_view op,
+            std::string_view first = std::string_view{},
+            std::string_view second = std::string_view{});
+
+
+    /**
+     * Concepts used for deciding how to print values. Right now only support
+     * `ostream`.
+     */
     template<typename T>
     concept stream_printable = requires(T const t, std::stringstream os) {
         {os << t};
     };
-
-    class test_failure : public std::exception {
-        std::string message;
-
-      public:
-        test_failure(std::string m) : message{std::move(m)} {}
-
-        char const *what() const noexcept { return message.c_str(); }
-    };
-
-
-    inline auto report(bool passed, std::string_view op, source_location s) {
-        if (not passed) {
-            std::stringstream m;
-            m << op << " failed at " << s.file_name() << ":" << s.line() << ":"
-              << s.column();
-            throw test_failure{m.str()};
-        }
-    }
-    inline auto
-            report(bool passed,
-                   std::string_view op,
-                   source_location s,
-                   std::string_view vl,
-                   std::string_view vr) {
-        if (not passed) {
-            std::stringstream m;
-            m << op << " failed at " << s.file_name() << ":" << s.line() << ":"
-              << s.column() << '\n'
-              << vl << ' ' << op << ' ' << vr;
-            throw test_failure{m.str()};
-        }
-    }
 
     template<typename V>
     inline std::string_view value_string(V const &) {
@@ -58,6 +43,30 @@ namespace felspar::test {
         std::stringstream ss{};
         ss << v;
         return ss.str();
+    }
+
+
+    /// The exception that is thrown in response to a test failure.
+    class test_failure : public std::exception {
+        std::string message;
+
+      public:
+        test_failure(std::string m) : message{std::move(m)} {}
+
+        char const *what() const noexcept { return message.c_str(); }
+    };
+
+
+    /**
+     * Default reporting which also throws the exception.
+     */
+    [[noreturn]] inline auto throw_failure(
+            source_location s,
+            std::string_view op,
+            std::string_view vl = std::string_view{},
+            std::string_view vr = std::string_view{}) {
+        throw test_failure{format_failure_message(
+                s.file_name(), s.line(), s.column(), op, vl, vr)};
     }
 
 

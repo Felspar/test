@@ -3,6 +3,23 @@
 #include <iostream>
 
 
+std::string felspar::test::format_failure_message(
+        std::string_view filename,
+        std::size_t line,
+        std::size_t column,
+        std::string_view op,
+        std::string_view first,
+        std::string_view second) {
+    std::stringstream m;
+    m << op << " failed at " << filename << ":" << line << ":" << column;
+    if (not first.empty()) {
+        m << "\ncheck(" << first << ") " << op;
+        if (not second.empty()) { m << ' ' << second; }
+    }
+    return m.str();
+}
+
+
 int main() {
     std::size_t number{}, pass{}, fail{};
     for (auto const &test : felspar::test::all_test_cases()) {

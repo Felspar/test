@@ -30,9 +30,7 @@ namespace felspar::test {
         template<typename C>
         auto report(bool passed, std::string_view op, C const &c) const {
             if (not passed) {
-                test::report(
-                        passed, op, source, value_string(value),
-                        value_string(c));
+                throw_failure(source, op, value_string(value), value_string(c));
             }
         }
 
@@ -51,17 +49,22 @@ namespace felspar::test {
         auto throws(E v) const;
         template<typename E>
         auto throws_type() const {
+            bool passed{false};
             try {
                 value();
-                return test::report(false, "throws", source);
-            } catch (E const &) { return test::report(true, "throws", source); }
+            } catch (E const &) { passed = true; }
+            if (not passed) { throw_failure(source, "throws"); }
         }
 
         auto is_truthy() const {
-            test::report(value ? true : false, "is_truthy", source);
+            if (not value) {
+                throw_failure(source, "is_truthy", value_string(value));
+            }
         }
         auto is_falsey() const {
-            test::report(value ? false : true, "is_falsey", source);
+            if (value) {
+                throw_failure(source, "is_falsey", value_string(value));
+            }
         }
     };
 
@@ -85,13 +88,14 @@ namespace felspar::test {
     template<typename V>
     template<typename E>
     inline auto checks<V>::throws(E v) const {
+        bool passed{false};
         try {
             value();
-            return test::report(false, "throws", source);
         } catch (E const &e) {
             check(e.what()) == std::string_view{v.what()};
-            return test::report(true, "throws", source);
+            passed = true;
         }
+        if (not passed) { throw_failure(source, "throws"); }
     }
 
 
