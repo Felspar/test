@@ -6,6 +6,8 @@ The test framework is currently at the pre-alpha "proof-of-concept" level and sh
 
 The framework is easy to use from your `CMakeLists.txt` and tests can be run as part of your normal build with no extra steps needed.
 
+Works with Clang 10 and GCC 10 in C++20 mode with both libstdc++ and libc++.
+
 ```cpp
 #include <felspar/test.hpp>
 
@@ -88,7 +90,7 @@ static auto const unary = felspar::testsuite(
         });
 ```
 
-You can also use the `.test` member of the `testsuite` which also takes an optional test name:
+You can also use the `.test` member of the returned object, which also takes an optional test name:
 
 ```cpp
 static auto const unary = felspar::testsuite("checks...unary")
@@ -139,3 +141,12 @@ check([]() {
 ```
 
 The first form, `throws`, checks that an exception of the appropriate type will be thrown and that the `what()` string of the caught exception and the passed exception are the same. The second form, `throws_type` only checks that an exception can be caught using a guard of the provided type.
+
+
+## TODO
+
+* Move implementation around and tidy up names.
+* Implement the rest of the comparison operators, including spaceship.
+* Print useful values in failure reports if the type supports `stream <<`.
+* Report a failure if a `check` isn't done because `check(true);` does nothing.
+* Add `skip` and `fails` alongside the `test` registration function.
