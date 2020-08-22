@@ -26,7 +26,7 @@ int main() {
         };
         std::cout << '\n';
     }
-    std::cout << number << " tests run, " << pass << " passed and " << fail
-              << " failed\n";
+    std::cout << (pass + fail) << " tests run, " << pass << " passed and "
+              << fail << " failed\n";
     return std::clamp<std::size_t>(fail, 0, 127);
 }
