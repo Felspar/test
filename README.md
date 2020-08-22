@@ -152,7 +152,7 @@ If the types used in an expression are printable to a `std::ostream<char>` then 
 
     maths:7 ... FAIL :-(
     != failed at ../../test/tests.cpp:69:0
-    4 != 4
+    check(4) != 4
 
 If the type doesn't support printing then it will be shown as `?? unprintable ??` instead.
 
