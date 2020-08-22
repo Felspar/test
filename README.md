@@ -87,7 +87,7 @@ static auto const unary = felspar::testsuite(
         [](auto check) {
             auto const *ptr = "";
             check(ptr).is_truthy();
-            check(ptr != nullptr).is_truthy();
+            check(ptr) != nullptr);
         });
 ```
 
@@ -99,7 +99,7 @@ static auto const unary = felspar::testsuite("checks...unary")
         .test("truthy", [](auto check) {
             auto const *ptr = "";
             check(ptr).is_truthy();
-            check(ptr != nullptr).is_truthy();
+            check(ptr) != nullptr;
         });
 ```
 
@@ -111,7 +111,7 @@ static auto const unary_1 = unary.test([](auto check) { check(true); });
 static auto const unary_truthy = unary.test("truthy", [](auto check) {
         auto const *ptr = "";
         check(ptr).is_truthy();
-        check(ptr != nullptr).is_truthy();
+        check(ptr) != nullptr;
     });
 ```
 
