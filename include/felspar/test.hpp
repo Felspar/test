@@ -17,7 +17,7 @@ namespace felspar {
     concept testable_value = std::is_move_constructible_v<T>;
 
     template<typename T>
-    concept stream_printable = requires(T t, std::stringstream os) {
+    concept stream_printable = requires(T const t, std::stringstream os) {
         {os << t};
     };
 
@@ -82,21 +82,22 @@ namespace felspar {
             checks(injected const &c, X &&v, source_location l)
             : check{c}, value{std::forward<X>(v)}, source{std::move(l)} {}
 
-            auto report(bool passed, std::string_view op, std::string vr) const {
+            auto report(bool passed, std::string_view op, std::string_view vr)
+                    const {
                 return detail::report(
-                        passed, op, source, value_string(value), std::move(vr));
+                        passed, op, source, value_string(value), vr);
             }
 
             /// All supported comparisons
             template<typename C>
             auto operator==(C &&c) const {
                 auto cs = value_string(c);
-                return report(value == std::forward<C>(c), "==", std::move(cs));
+                return report(value == std::forward<C>(c), "==", cs);
             }
             template<typename C>
             auto operator!=(C &&c) const {
                 auto cs = value_string(c);
-                return report(value != std::forward<C>(c), "!=", std::move(cs));
+                return report(value != std::forward<C>(c), "!=", cs);
             }
 
             /// Other supported checks
