@@ -24,9 +24,33 @@ namespace {
                               check(1) == 1;
                               check(std::string{"hello"}) == "hello";
                           })
-                    .test("!=", [](auto check) {
-                        check(1) != 2;
-                        check(std::string{"hello"}) != "world";
+                    .test("!=",
+                          [](auto check) {
+                              check(1) != 2;
+                              check(std::string{"hello"}) != "world";
+                          })
+                    .test("<",
+                          [](auto check) {
+                              check(1) < 2;
+                              check(std::string{"hello"}) < "world";
+                          })
+                    .test("<=",
+                          [](auto check) {
+                              check(1) <= 1;
+                              check(1) <= 2;
+                              check(std::string{"hello"}) <= "hello";
+                              check(std::string{"hello"}) <= "world";
+                          })
+                    .test(">",
+                          [](auto check) {
+                              check(2) > 1;
+                              check(std::string{"world"}) > "hello";
+                          })
+                    .test(">=", [](auto check) {
+                        check(1) >= 1;
+                        check(2) >= 2;
+                        check(std::string{"world"}) >= "world";
+                        check(std::string{"world"}) >= "hello";
                     });
 
 

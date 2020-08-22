@@ -118,7 +118,7 @@ static auto const unary_truthy = unary.test("truthy", [](auto check) {
 
 ## Test operations
 
-The object injected into the tests (conventionally called `check`) is used as the basis of the assertions. Values can be wrapped and then compared (only `==` and `!=` are currently supported):
+The object injected into the tests (conventionally called `check`) is used as the basis of the assertions. Values can be wrapped and then compared (only `==`, `!=`, `<`, `<=`, `>`, and `>=` are currently supported):
 
 ```cpp
 check(some_value) == other_value;
@@ -158,6 +158,6 @@ If the type doesn't support printing then it will be shown as `?? unprintable ??
 
 ## TODO
 
-* Implement the rest of the comparison operators, including spaceship.
-* Report a failure if a `check` isn't done because `check(true);` does nothing.
+* Implement the spaceship operator.
+* Report a failure if a `check` isn't done (because `check(true);` does nothing).
 * Add `skip` and `fails` alongside the `test` registration function.

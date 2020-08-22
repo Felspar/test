@@ -43,6 +43,22 @@ namespace felspar::test {
         auto operator!=(C const &c) const {
             return report(value != c, "!=", c);
         }
+        template<typename C>
+        auto operator<(C const &c) const {
+            return report(value < c, "<", c);
+        }
+        template<typename C>
+        auto operator<=(C const &c) const {
+            return report(value <= c, "<=", c);
+        }
+        template<typename C>
+        auto operator>(C const &c) const {
+            return report(value > c, ">", c);
+        }
+        template<typename C>
+        auto operator>=(C const &c) const {
+            return report(value >= c, ">=", c);
+        }
 
         /// Other supported checks
         template<typename E>
