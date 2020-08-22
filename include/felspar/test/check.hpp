@@ -4,7 +4,6 @@
 #include <type_traits>
 
 #include <felspar/test/report.hpp>
-#include <felspar/test/source.hpp>
 
 
 namespace felspar::test {
