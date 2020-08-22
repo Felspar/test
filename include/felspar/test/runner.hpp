@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include <felspar/test.hpp>
+#include <felspar/test/suite.hpp>
 
 
 namespace felspar::test {
