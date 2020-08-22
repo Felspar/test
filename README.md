@@ -1,5 +1,6 @@
 # Felspar Test
 
+
 **Testing library with cmake integration for C++20**
 
 The test framework is currently at the pre-alpha "proof-of-concept" level and shows that we can now do testing properly without macros.
@@ -98,7 +99,7 @@ static auto const unary = felspar::testsuite("checks...unary")
         .test("truthy", [](auto check) {
             auto const *ptr = "";
             check(ptr).is_truthy();
-            check(ptr != nullptr);
+            check(ptr != nullptr).is_truthy();
         });
 ```
 
@@ -110,9 +111,10 @@ static auto const unary_1 = unary.test([](auto check) { check(true); });
 static auto const unary_truthy = unary.test("truthy", [](auto check) {
         auto const *ptr = "";
         check(ptr).is_truthy();
-        check(ptr != nullptr);
+        check(ptr != nullptr).is_truthy();
     });
 ```
+
 
 ## Test operations
 
