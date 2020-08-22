@@ -4,9 +4,8 @@
 
 
 int main() {
-    auto const tests = felspar::all_test_cases();
     std::size_t number{}, pass{}, fail{};
-    for (auto const &test : felspar::all_test_cases()) {
+    for (auto const &test : felspar::test::all_test_cases()) {
         if (test.name.empty()) {
             std::cout << test.suite << ':' << std::to_string(++number);
         } else {

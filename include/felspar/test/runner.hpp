@@ -4,7 +4,7 @@
 #include <felspar/test.hpp>
 
 
-namespace felspar {
+namespace felspar::test {
 
 
     /*
