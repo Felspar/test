@@ -2,11 +2,9 @@
 
 
 #include <span>
-#include <string>
-#include <string_view>
-#include <sstream>
 #include <utility>
 
+#include <felspar/test/report.hpp>
 #include <felspar/test/source.hpp>
 
 
@@ -16,57 +14,8 @@ namespace felspar {
     template<typename T>
     concept testable_value = std::is_move_constructible_v<T>;
 
-    template<typename T>
-    concept stream_printable = requires(T const t, std::stringstream os) {
-        {os << t};
-    };
-
-    class test_failure : public std::exception {
-        std::string message;
-
-      public:
-        test_failure(std::string m) : message{std::move(m)} {}
-
-        char const *what() const noexcept { return message.c_str(); }
-    };
-
 
     namespace detail {
-
-
-        inline auto report(bool passed, std::string_view op, source_location s) {
-            if (not passed) {
-                std::stringstream m;
-                m << op << " failed at " << s.file_name() << ":" << s.line()
-                  << ":" << s.column();
-                throw test_failure{m.str()};
-            }
-        }
-        inline auto
-                report(bool passed,
-                       std::string_view op,
-                       source_location s,
-                       std::string_view vl,
-                       std::string_view vr) {
-            if (not passed) {
-                std::stringstream m;
-                m << op << " failed at " << s.file_name() << ":" << s.line()
-                  << ":" << s.column() << '\n'
-                  << vl << ' ' << op << ' ' << vr;
-                throw test_failure{m.str()};
-            }
-        }
-
-        template<typename V>
-        inline std::string_view value_string(V const &) {
-            return "?? unprintable ??";
-        }
-        template<stream_printable V>
-        inline auto value_string(V const &v) {
-            std::stringstream ss{};
-            ss << v;
-            return ss.str();
-        }
 
 
         struct injected;
@@ -84,19 +33,20 @@ namespace felspar {
 
             auto report(bool passed, std::string_view op, std::string_view vr)
                     const {
-                return detail::report(
-                        passed, op, source, value_string(value), vr);
+                return felspar::test::report(
+                        passed, op, source, felspar::test::value_string(value),
+                        vr);
             }
 
             /// All supported comparisons
             template<typename C>
             auto operator==(C &&c) const {
-                auto cs = value_string(c);
+                auto cs = felspar::test::value_string(c);
                 return report(value == std::forward<C>(c), "==", cs);
             }
             template<typename C>
             auto operator!=(C &&c) const {
-                auto cs = value_string(c);
+                auto cs = felspar::test::value_string(c);
                 return report(value != std::forward<C>(c), "!=", cs);
             }
 
@@ -107,17 +57,19 @@ namespace felspar {
             auto throws_type() const {
                 try {
                     value();
-                    return detail::report(false, "throws", source);
+                    return felspar::test::report(false, "throws", source);
                 } catch (E const &) {
-                    return detail::report(true, "throws", source);
+                    return felspar::test::report(true, "throws", source);
                 }
             }
 
             auto is_truthy() const {
-                detail::report(value ? true : false, "is_truthy", source);
+                felspar::test::report(
+                        value ? true : false, "is_truthy", source);
             }
             auto is_falsey() const {
-                detail::report(value ? false : true, "is_falsey", source);
+                felspar::test::report(
+                        value ? false : true, "is_falsey", source);
             }
         };
 
@@ -143,10 +95,10 @@ namespace felspar {
         inline auto checks<V>::throws(E v) const {
             try {
                 value();
-                return detail::report(false, "throws", source);
+                return felspar::test::report(false, "throws", source);
             } catch (E const &e) {
                 check(e.what()) == std::string_view{v.what()};
-                return detail::report(true, "throws", source);
+                return felspar::test::report(true, "throws", source);
             }
         }
 
