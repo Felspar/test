@@ -13,7 +13,8 @@ namespace {
             [](auto check) {
                 auto const *ptr = "";
                 check(ptr).is_truthy();
-                check(ptr != nullptr).is_truthy();
+                ptr = nullptr;
+                check(ptr).is_falsey();
             });
 
     static auto const binary =

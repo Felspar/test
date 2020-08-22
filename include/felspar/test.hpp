@@ -84,6 +84,9 @@ namespace felspar {
             auto is_truthy() const {
                 detail::report(value ? true : false, "is_truthy", source);
             }
+            auto is_falsey() const {
+                detail::report(value ? false : true, "is_falsey", source);
+            }
         };
 
 
