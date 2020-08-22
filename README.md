@@ -158,7 +158,6 @@ If the type doesn't support printing then it will be shown as `?? unprintable ??
 
 ## TODO
 
-* Move implementation around and tidy up names.
 * Implement the rest of the comparison operators, including spaceship.
 * Report a failure if a `check` isn't done because `check(true);` does nothing.
 * Add `skip` and `fails` alongside the `test` registration function.

@@ -9,10 +9,10 @@ auto &cases() {
 }
 
 
-void felspar::detail::register_test(
+void felspar::test::register_test(
         std::string_view s,
         std::string_view n,
-        test_function f,
+        test_function_ptr f,
         source_location l) {
     cases().push_back(test::test_case{s, n, f, l});
 }
