@@ -128,6 +128,7 @@ Values can also be checked to ensure they will work correctly in conditional con
 
 ```cpp
 check(non_empty_optional).is_truthy();
+check(empty_optional).is_falsey();
 ```
 
 Exceptions can be checked either by type or by value:
