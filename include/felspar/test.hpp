@@ -31,23 +31,24 @@ namespace felspar {
             checks(injected const &c, X &&v, source_location l)
             : check{c}, value{std::forward<X>(v)}, source{std::move(l)} {}
 
-            auto report(bool passed, std::string_view op, std::string_view vr)
-                    const {
-                return felspar::test::report(
-                        passed, op, source, felspar::test::value_string(value),
-                        vr);
+            template<typename C>
+            auto report(bool passed, std::string_view op, C const &c) const {
+                if (not passed) {
+                    felspar::test::report(
+                            passed, op, source,
+                            felspar::test::value_string(value),
+                            felspar::test::value_string(c));
+                }
             }
 
             /// All supported comparisons
             template<typename C>
-            auto operator==(C &&c) const {
-                auto cs = felspar::test::value_string(c);
-                return report(value == std::forward<C>(c), "==", cs);
+            auto operator==(C const &c) const {
+                return report(value == c, "==", c);
             }
             template<typename C>
-            auto operator!=(C &&c) const {
-                auto cs = felspar::test::value_string(c);
-                return report(value != std::forward<C>(c), "!=", cs);
+            auto operator!=(C const &c) const {
+                return report(value != c, "!=", c);
             }
 
             /// Other supported checks
