@@ -30,7 +30,7 @@ namespace felspar {
         std::string_view suite, name;
         std::exception_ptr operator()() const {
             try {
-                test(detail::injected{});
+                test(test::injected{});
                 return nullptr;
             } catch (...) { return std::current_exception(); }
         }

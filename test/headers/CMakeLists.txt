@@ -1,4 +1,5 @@
 add_library(felspar-test-headers
+        check.cpp
         report.cpp
         runner.cpp
         test.cpp)
