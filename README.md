@@ -3,9 +3,7 @@
 
 **Testing library with cmake integration for C++20**
 
-The test framework is currently at the pre-alpha "proof-of-concept" level and shows that we can now do testing properly without macros.
-
-The framework is easy to use from your `CMakeLists.txt` and tests can be run as part of your normal build with no extra steps needed.
+The framework is easy to use from your `CMakeLists.txt` and tests can be run as part of your normal build with no extra steps needed. The tests are also easy to write using standard C++ syntax and operators with no macros to memorize.
 
 Works with Clang 10 and GCC 10 in C++20 mode with both libstdc++ and libc++.
 
@@ -114,6 +112,8 @@ static auto const unary_truthy = unary.test("truthy", [](auto check) {
         check(ptr) != nullptr;
     });
 ```
+
+These approaches can be freely mixed.
 
 
 ## Test operations
