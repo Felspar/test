@@ -28,6 +28,7 @@ int main() {
         } else {
             std::cout << test.suite << ':' << test.name;
         }
+        std::cout << std::flush;
         if (auto const eptr = test(); not eptr) {
             ++pass;
             std::cout << " ... OK";
