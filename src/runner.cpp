@@ -43,7 +43,8 @@ int main() {
         };
         std::cout << '\n';
     }
-    std::cout << (pass + fail) << " tests run, " << pass << " passed and "
-              << fail << " failed\n";
+    std::cout << (pass + fail) << " tests run, " << pass << " passed";
+    if (fail) { std::cout << " and " << fail << " failed\n"; }
+    else { std::cout << '\n'; }
     return std::clamp<std::size_t>(fail, 0, 127);
 }
