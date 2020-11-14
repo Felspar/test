@@ -83,10 +83,10 @@ namespace {
 
     auto const vector = felspar::testsuite(
             "vector",
-            [](auto check) { check(std::vector<int>{}.size()) == 0; },
+            [](auto check) { check(std::vector<int>{}.size()) == 0u; },
             [](auto check) {
                 std::vector items = {1, 2, 3, 4};
-                check(items.size()) == 4;
+                check(items.size()) == 4u;
                 check(items.front()) == 1;
                 check(items[1]) == 2;
                 check(items[2]) == 3;

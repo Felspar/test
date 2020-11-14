@@ -21,7 +21,7 @@ namespace felspar::test {
     template<typename F>
     struct part {
         template<typename V>
-        part(V v, source_location loc = source_location::current()) {}
+        part(V, source_location = source_location::current()) {}
     };
     struct registration {
         std::string_view const suite;
