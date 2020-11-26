@@ -61,7 +61,7 @@ namespace felspar::test {
 
         /// Other supported checks
         template<typename E>
-        auto throws(E v) const;
+        auto throws(E v, source_location loc = source_location::current()) const;
         template<typename E>
         auto throws_type() const {
             bool passed{false};
@@ -102,12 +102,12 @@ namespace felspar::test {
 
     template<typename V>
     template<typename E>
-    inline auto checks<V>::throws(E v) const {
+    inline auto checks<V>::throws(E v, source_location loc) const {
         bool passed{false};
         try {
             value();
         } catch (E const &e) {
-            check(e.what()) == std::string_view{v.what()};
+            check(e.what(), std::move(loc)) == std::string_view{v.what()};
             passed = true;
         }
         if (not passed) { throw_failure(source, "throws"); }
