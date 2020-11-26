@@ -103,14 +103,15 @@ namespace felspar::test {
     template<typename V>
     template<typename E>
     inline auto checks<V>::throws(E v, source_location loc) const {
-        bool passed{false};
         try {
             value();
-        } catch (E const &e) {
-            check(e.what(), std::move(loc)) == std::string_view{v.what()};
-            passed = true;
+        } catch (E e) {
+            std::string_view e_what = e.what();
+            std::string_view v_what = v.what();
+            check(e_what.substr(0, e_what.find('\n')), std::move(loc)) == v_what.substr(0, v_what.find('\n'));
+            return std::move(e);
         }
-        if (not passed) { throw_failure(source, "throws"); }
+        throw_failure(source, "throws");
     }
 
 
