@@ -61,7 +61,9 @@ namespace felspar::test {
 
         /// Other supported checks
         template<typename E>
-        auto throws(E const &v, source_location loc = source_location::current()) const;
+        auto
+                throws(E const &v,
+                       source_location loc = source_location::current()) const;
         template<typename E>
         auto throws_type() const {
             bool passed{false};
@@ -102,7 +104,8 @@ namespace felspar::test {
         } catch (E &e) {
             std::string_view e_what = e.what();
             std::string_view v_what = v.what();
-            check(e_what.substr(0, e_what.find('\n')), std::move(loc)) == v_what.substr(0, v_what.find('\n'));
+            check(e_what.substr(0, e_what.find('\n')), std::move(loc))
+                    == v_what.substr(0, v_what.find('\n'));
             return std::current_exception();
         }
         throw_failure(source, "throws");

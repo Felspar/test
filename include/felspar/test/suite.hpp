@@ -53,7 +53,7 @@ namespace felspar::test {
         return registration{n};
     }
     template<std::size_t N, test_function... Ts>
-    inline auto testsuite(char const (&n)[N], Ts &&... tests) {
+    inline auto testsuite(char const (&n)[N], Ts &&...tests) {
         registration suite{n};
         (suite.test(tests), ...);
         return suite;
