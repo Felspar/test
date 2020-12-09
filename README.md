@@ -143,7 +143,7 @@ check([]() {
 }).template throws_type<std::runtime_error>();
 ```
 
-The first form, `throws`, checks that an exception of the appropriate type will be thrown and that the first lines of the `what()` string of the caught exception and the passed exception are the same. The thrown exception is returned so that further checks can be carried out on it if required.
+The first form, `throws`, checks that an exception of the appropriate type will be thrown and that the first lines of the `what()` string of the caught exception and the passed exception are the same. The thrown exception is returned (as a `std::exception_ptr`) so that further checks can be carried out on it if required.
 
 The second form, `throws_type`, only checks that an exception can be caught using a guard of the provided type.
 
