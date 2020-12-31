@@ -42,7 +42,7 @@ include(FetchContent)
 
 FetchContent_Declare(
         felspar-test
-        GIT_REPOSITORY git@github.com:Felspar/test.git
+        GIT_REPOSITORY https://github.com/Felspar/test.git
         GIT_TAG main
     )
 FetchContent_GetProperties(felspar-test)
