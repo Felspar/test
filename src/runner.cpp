@@ -29,12 +29,16 @@ int main() {
             std::cout << test.suite << ':' << test.name;
         }
         std::cout << std::flush;
-        if (auto const eptr = test(); not eptr) {
+        std::stringstream ss;
+        if (auto const eptr = test(ss); not eptr) {
             ++pass;
             std::cout << " ... OK";
         } else {
             ++fail;
             std::cout << " ... FAIL :-(";
+            if (auto const str = ss.str(); not str.empty()) {
+                std::cout << "\n---output---\n\n" << str << "\n^^^output^^^";
+            }
             try {
                 std::rethrow_exception(eptr);
             } catch (std::exception const &e) {

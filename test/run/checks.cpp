@@ -101,4 +101,14 @@ namespace {
             });
 
 
+    auto const overloads = felspar::testsuite(
+            "overloads",
+            []() { std::string{}; },
+            [](auto check) { check(true).is_truthy(); },
+            [](auto &os, auto check) {
+                os << "Starting test\n";
+                check(true).is_truthy();
+            });
+
+
 }

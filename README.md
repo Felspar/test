@@ -116,6 +116,42 @@ static auto const unary_truthy = unary.test("truthy", [](auto check) {
 These approaches can be freely mixed.
 
 
+### Logging in tests
+
+The test runner can pass a `std::stringstream` to the the test which can be used for logging which is shown if the test fails.
+
+```cpp
+static auto const logger = felspar::testsuite("with logging",
+    [](auto &os, auto check) {
+        os << "Starting test\n";
+        check(false).is_truthy();
+    });
+```
+
+Might be reported as:
+
+    with logging:1 ... FAIL :-(
+    ---output---
+
+    Starting test
+
+    ^^^output^^^
+    is_truthy failed at ../../test/test/run/checks.cpp:112:51
+    check(0) is_truthy
+
+
+### Tests with no checks
+
+It is also possible to write tests that don't require checks at all. Simply pass a nullary test lambda for this situation:
+
+```cpp
+static auto const nocheck = felspar::testsuite("no check",
+    []() {
+        std::string{};
+    });
+```
+
+
 ## Test operations
 
 The object injected into the tests (conventionally called `check`) is used as the basis of the assertions. Values can be wrapped and then compared (only `==`, `!=`, `<`, `<=`, `>`, and `>=` are currently supported):

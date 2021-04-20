@@ -28,9 +28,9 @@ namespace felspar::test {
 
       public:
         std::string_view suite, name;
-        std::exception_ptr operator()() const {
+        std::exception_ptr operator()(std::ostream &os) const {
             try {
-                test(test::injected{});
+                test(os, test::injected{});
                 return nullptr;
             } catch (...) { return std::current_exception(); }
         }
