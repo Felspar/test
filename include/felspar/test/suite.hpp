@@ -12,6 +12,7 @@ namespace felspar::test {
 
     using test_function_ptr =
             std::function<void(std::ostream &, test::injected)>;
+    using test_check_log_function = void (*)(test::injected, std::ostream &);
     using test_check_function = void (*)(test::injected);
     using test_nullary_function = void (*)(void);
 
@@ -21,6 +22,15 @@ namespace felspar::test {
             std::string_view test,
             test_function_ptr,
             source_location);
+    inline void register_test(
+            std::string_view suite,
+            std::string_view test,
+            test_check_log_function f,
+            source_location loc) {
+        register_test(
+                suite, test,
+                [f](std::ostream &l, test::injected c) { f(c, l); }, loc);
+    }
     inline void register_test(
             std::string_view suite,
             std::string_view test,
