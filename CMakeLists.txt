@@ -7,7 +7,7 @@ set(FELSPAR_CHECK_TESTS YES
 if(${FELSPAR_CHECK_TESTS} AND NOT TARGET felspar-check)
     enable_testing()
     add_custom_target(felspar-check)
-    set_property(TARGET check PROPERTY EXCLUDE_FROM_ALL TRUE)
+    set_property(TARGET felspar-check PROPERTY EXCLUDE_FROM_ALL TRUE)
 endif()
 
 
