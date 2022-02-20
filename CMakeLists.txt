@@ -4,9 +4,10 @@ project(felspar-test)
 
 set(FELSPAR_CHECK_TESTS YES
     CACHE STRING "Turn off to stop tests from being built and run")
-if(${FELSPAR_CHECK_TESTS} AND NOT TARGET check)
+if(${FELSPAR_CHECK_TESTS} AND NOT TARGET felspar-check)
     enable_testing()
-    add_custom_target(check)
+    add_custom_target(felspar-check)
+    set_property(TARGET check PROPERTY EXCLUDE_FROM_ALL TRUE)
 endif()
 
 
@@ -35,7 +36,6 @@ endfunction()
 add_subdirectory(src)
 
 
-if(TARGET check AND ${FELSPAR_CHECK_TESTS})
-    set_property(TARGET check PROPERTY EXCLUDE_FROM_ALL TRUE)
+if(TARGET felspar-check AND ${FELSPAR_CHECK_TESTS})
     add_subdirectory(test)
 endif()

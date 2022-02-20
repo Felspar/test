@@ -13,6 +13,6 @@ target_link_libraries(felspar-test-suite felspar-test)
 ## Library used for the default test runner
 add_library(felspar-test-runner STATIC runner.cpp)
 target_link_libraries(felspar-test-runner felspar-test-suite)
-if(TARGET check)
-    add_test_run(check TESTS runner.tests.cpp)
+if(TARGET felspar-check)
+    add_test_run(felspar-check TESTS runner.tests.cpp)
 endif()
