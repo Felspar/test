@@ -28,11 +28,16 @@ namespace felspar::test {
 
       public:
         std::string_view suite, name;
-        std::exception_ptr operator()(std::ostream &os) const {
+        std::pair<std::exception_ptr, std::chrono::steady_clock::duration>
+                operator()(std::ostream &os) const {
+            auto const started = std::chrono::steady_clock::now();
             try {
                 test(os, test::injected{});
-                return nullptr;
-            } catch (...) { return std::current_exception(); }
+                return {nullptr, std::chrono::steady_clock::now() - started};
+            } catch (...) {
+                return {std::current_exception(),
+                        std::chrono::steady_clock::now() - started};
+            }
         }
     };
     std::span<test_case const> all_test_cases();

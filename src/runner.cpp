@@ -20,6 +20,22 @@ std::string felspar::test::format_failure_message(
 }
 
 
+namespace {
+    inline std::string timestr(std::chrono::nanoseconds ns) {
+        using namespace std::literals;
+        if (ns < 1us) {
+            return std::to_string(ns.count()) + "ns";
+        } else if (ns < 1ms) {
+            return std::to_string(ns.count() / 1000) + "µs";
+        } else if (ns < 1s) {
+            return std::to_string(ns.count() / 1000'000) + "ms";
+        } else {
+            return std::to_string(ns.count() / 1000'000'000) + "s";
+        }
+    }
+}
+
+
 int main() {
     std::size_t number{}, pass{}, fail{};
     for (auto const &test : felspar::test::all_test_cases()) {
@@ -30,12 +46,12 @@ int main() {
         }
         std::cout << std::flush;
         std::stringstream ss;
-        if (auto const eptr = test(ss); not eptr) {
+        if (auto const [eptr, time] = test(ss); not eptr) {
             ++pass;
-            std::cout << " ... OK";
+            std::cout << " ... OK -- " << timestr(time);
         } else {
             ++fail;
-            std::cout << " ... FAIL :-(";
+            std::cout << " ... FAIL :-( -- " << timestr(time);
             if (auto const str = ss.str(); not str.empty()) {
                 std::cout << "\n---output---\n\n" << str << "\n^^^output^^^";
             }
