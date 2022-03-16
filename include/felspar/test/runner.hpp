@@ -3,6 +3,8 @@
 
 #include <felspar/test/suite.hpp>
 
+#include <chrono>
+
 
 namespace felspar::test {
 
