@@ -3,13 +3,13 @@ version: 2.1
 executors:
   clang:
     docker:
-    - image: keyess/cpp
+    - image: kayess/cpp
     environment:
       CC: clang
       CXX: clang++
   clang-libcpp:
     docker:
-    - image: keyess/cpp
+    - image: kayess/cpp
     environment:
       CC: clang
       CXX: clang++
@@ -17,7 +17,7 @@ executors:
       LD_FLAGS: "-stdlib=libc++"
   gcc:
     docker:
-    - image: keyess/cpp
+    - image: kayess/cpp
     environment:
       CC: gcc
       CXX: g++
