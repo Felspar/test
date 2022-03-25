@@ -19,5 +19,6 @@ void felspar::test::register_test(
 
 
 auto felspar::test::all_test_cases() -> std::span<test_case const> {
-    return cases();
+    auto const &c{cases()};
+    return {c.data(), c.size()};
 }
