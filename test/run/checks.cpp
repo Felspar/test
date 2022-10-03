@@ -66,7 +66,7 @@ namespace {
             });
 
 
-    void thrower() { throw std::runtime_error{"An exception"}; }
+    [[noreturn]] void thrower() { throw std::runtime_error{"An exception"}; }
     auto const throws = felspar::testsuite(
             "throws",
             [](auto check) {
