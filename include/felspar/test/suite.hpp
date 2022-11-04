@@ -53,8 +53,8 @@ namespace felspar::test {
     template<typename F>
     concept test_function =
             requires(F f, std::string_view sv, source_location loc) {
-        register_test(sv, sv, f, loc);
-    };
+                register_test(sv, sv, f, loc);
+            };
 
 
     template<typename F>

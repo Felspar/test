@@ -61,9 +61,9 @@ namespace felspar::test {
 
         /// Other supported checks
         template<typename E>
-        auto
-                throws(E const &v,
-                       source_location const &loc = source_location::current()) const;
+        auto throws(
+                E const &v,
+                source_location const &loc = source_location::current()) const;
         template<typename E>
         auto throws_type() const {
             bool passed{false};
@@ -90,7 +90,8 @@ namespace felspar::test {
     struct injected {
         template<testable_value V>
         auto operator()(
-                V &&v, source_location const &loc = source_location::current()) const {
+                V &&v,
+                source_location const &loc = source_location::current()) const {
             return checks<V>{*this, std::forward<V>(v), loc};
         }
     };
