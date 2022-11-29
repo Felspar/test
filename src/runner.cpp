@@ -1,6 +1,13 @@
 #include <felspar/test/runner.hpp>
 
+#include <chrono>
 #include <iostream>
+#include <thread>
+
+
+#ifndef FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS
+#define FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS 30
+#endif
 
 
 std::string felspar::test::format_failure_message(
@@ -37,6 +44,12 @@ namespace {
 
 
 int main() {
+    std::thread{[]() {
+        constexpr std::chrono::seconds timeout{FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS};
+        std::this_thread::sleep_for(timeout);
+        std::cerr << "\n\nTiming out after " << timestr(timeout) << '\n';
+        std::exit(127);
+    }}.detach();
     std::size_t number{}, pass{}, fail{};
     for (auto const &test : felspar::test::all_test_cases()) {
         if (test.name.empty()) {
@@ -69,5 +82,5 @@ int main() {
     } else {
         std::cout << '\n';
     }
-    return std::clamp<std::size_t>(fail, 0, 127);
+    return std::clamp<std::size_t>(fail, 0, 126);
 }

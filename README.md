@@ -195,6 +195,11 @@ If the types used in an expression are printable to a `std::ostream<char>` then 
 If the type doesn't support printing then it will be shown as `?? unprintable ??` instead.
 
 
+## Time outs
+
+By default the test runner will time out after 30 seconds. To increase this number define the pre-processor symbol `FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS` to a higher (or, if you want, a smaller) number in your build configuration for the tests.
+
+
 ## TODO
 
 * Implement the spaceship operator.
