@@ -122,7 +122,7 @@ The test runner can pass a `std::stringstream` to the the test which can be used
 
 ```cpp
 static auto const logger = felspar::testsuite("with logging",
-    [](auto &os, auto check) {
+    [](auto check, auto &os) {
         os << "Starting test\n";
         check(false).is_truthy();
     });
