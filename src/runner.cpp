@@ -45,7 +45,8 @@ namespace {
 
 int main() {
     std::thread{[]() {
-        constexpr std::chrono::seconds timeout{FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS};
+        constexpr std::chrono::seconds timeout{
+                FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS};
         std::this_thread::sleep_for(timeout);
         std::cerr << "\n\nTiming out after " << timestr(timeout) << '\n';
         std::exit(127);
