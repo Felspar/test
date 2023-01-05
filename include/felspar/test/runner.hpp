@@ -9,9 +9,7 @@
 namespace felspar::test {
 
 
-    /**
-     * Used by the test runner to fetch tests and run them.
-     */
+    /// Used by the test runner to fetch tests and run them.
     class test_case {
         friend void register_test(
                 std::string_view,

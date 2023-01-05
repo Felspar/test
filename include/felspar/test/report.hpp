@@ -57,9 +57,7 @@ namespace felspar::test {
     };
 
 
-    /**
-     * Default reporting which also throws the exception.
-     */
+    /// Default reporting which also throws the exception.
     [[noreturn]] inline auto throw_failure(
             source_location s,
             std::string_view op,
