@@ -1,11 +1,12 @@
 # Felspar Test
 
 
-**Testing library with cmake integration for C++20**
+**Testing framework with cmake integration for C++20**
 
 The framework is easy to use from your `CMakeLists.txt` and tests can be run as part of your normal build with no extra steps needed. The tests are also easy to write using standard C++ syntax and operators with no macros to memorize.
 
-Works with Clang 10 and GCC 10 in C++20 mode with both libstdc++ and libc++.
+
+## Basic usage
 
 ```cpp
 #include <felspar/test.hpp>
@@ -205,3 +206,4 @@ By default the test runner will time out after 30 seconds. To increase this numb
 * Implement the spaceship operator.
 * Report a failure if a `check` isn't done (because `check(true);` does nothing).
 * Add `skip` and `fails` alongside the `test` registration function.
+* Be more flexible in APIs that take multiple tests and test names.
