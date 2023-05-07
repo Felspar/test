@@ -50,15 +50,38 @@ namespace felspar::test {
     struct registration {
         std::string_view const suite;
 
-        template<test_function... TF>
-        auto test(char const *name, TF... ts) const {
-            (register_test(suite, name, ts), ...);
+        template<test_function TF>
+        auto test(char const *name, TF t) const {
+            register_test(suite, name, t);
             return *this;
         }
-        template<test_function... TF>
-        auto test(TF... ts) const {
+        template<test_function TF>
+        auto test(TF t) const {
+            register_test(suite, {}, t);
+            return *this;
+        }
+        template<test_function TF, test_function... TFs>
+        auto test(char const *name, TF t, TFs... ts) const {
+            rt(name, std::tuple{t, ts...},
+               std::make_index_sequence<sizeof...(TFs) + 1>{});
+            return *this;
+        }
+        template<test_function TF, test_function... TFs>
+        auto test(TF t, TFs... ts) const {
+            register_test(suite, {}, t);
             (register_test(suite, {}, ts), ...);
             return *this;
+        }
+
+      private:
+        template<test_function... TFs, std::size_t... I>
+        void rt(const char *n,
+                std::tuple<TFs...> ts,
+                std::index_sequence<I...>) const {
+            (register_test(
+                     suite, std::string{n} + "/" + std::to_string(I + 1),
+                     std::get<I>(ts)),
+             ...);
         }
     };
 
