@@ -13,21 +13,22 @@ namespace felspar::test {
     class test_case {
         friend void register_test(
                 std::string_view,
-                std::string_view,
+                std::string,
                 test_function_ptr,
-                source_location);
+                source_location const &);
 
         test_function_ptr test;
 
         test_case(
                 std::string_view s,
-                std::string_view n,
+                std::string n,
                 test_function_ptr f,
-                source_location)
-        : test{f}, suite{s}, name{n} {}
+                source_location const &)
+        : test{f}, suite{s}, name{std::move(n)} {}
 
       public:
-        std::string_view suite, name;
+        std::string_view suite;
+        std::string name;
         std::pair<std::exception_ptr, std::chrono::steady_clock::duration>
                 operator()(std::ostream &os) const {
             auto const started = std::chrono::steady_clock::now();
