@@ -64,6 +64,7 @@ namespace felspar::test {
     };
     struct registration {
         std::string_view const suite;
+
         template<test_function TF>
         auto
                 test(char const *name,
@@ -75,6 +76,17 @@ namespace felspar::test {
         template<test_function TF>
         auto test(TF t, source_location loc = source_location::current()) const {
             register_test(suite, {}, t, loc);
+            return *this;
+        }
+
+        template<test_function... TF>
+        auto test(char const *name, TF... ts) const {
+            (register_test(suite, name, ts, source_location::current()), ...);
+            return *this;
+        }
+        template<test_function... TF>
+        auto test(TF... ts) const {
+            (register_test(suite, {}, ts, source_location::current()), ...);
             return *this;
         }
     };
