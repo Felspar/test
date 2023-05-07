@@ -18,7 +18,7 @@ std::string felspar::test::format_failure_message(
         std::string_view first,
         std::string_view second) {
     std::stringstream m;
-    m << op << " failed at " << filename << ":" << line << ":" << column;
+    m << "Failed at " << filename << ":" << line << ":" << column;
     if (not first.empty()) {
         m << "\ncheck(" << first << ") " << op;
         if (not second.empty()) { m << ' ' << second; }
