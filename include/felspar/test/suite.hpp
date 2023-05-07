@@ -18,43 +18,32 @@ namespace felspar::test {
 
 
     void register_test(
-            std::string_view suite,
-            std::string test,
-            test_function_ptr,
-            source_location const &);
+            std::string_view suite, std::string test, test_function_ptr);
     inline void register_test(
             std::string_view suite,
             std::string test,
-            test_check_log_function f,
-            source_location const &loc) {
+            test_check_log_function f) {
         register_test(
                 suite, std::move(test),
-                [f](std::ostream &l, test::injected c) { f(c, l); }, loc);
+                [f](std::ostream &l, test::injected c) { f(c, l); });
     }
     inline void register_test(
-            std::string_view suite,
-            std::string test,
-            test_check_function f,
-            source_location const &loc) {
+            std::string_view suite, std::string test, test_check_function f) {
         register_test(
                 suite, std::move(test),
-                [f](std::ostream &, test::injected c) { f(c); }, loc);
+                [f](std::ostream &, test::injected c) { f(c); });
     }
     inline void register_test(
-            std::string_view suite,
-            std::string test,
-            test_nullary_function f,
-            source_location const &loc) {
+            std::string_view suite, std::string test, test_nullary_function f) {
         register_test(
                 suite, std::move(test),
-                [f](std::ostream &, test::injected) { f(); }, loc);
+                [f](std::ostream &, test::injected) { f(); });
     }
 
 
     template<typename F>
-    concept test_function = requires(
-            F f, std::string_view sv, std::string s, source_location loc) {
-                                register_test(sv, s, f, loc);
+    concept test_function = requires(F f, std::string_view sv, std::string s) {
+                                register_test(sv, s, f);
                             };
 
 
@@ -66,29 +55,14 @@ namespace felspar::test {
     struct registration {
         std::string_view const suite;
 
-        template<test_function TF>
-        auto test(
-                char const *name,
-                TF t,
-                source_location const &loc = source_location::current()) const {
-            register_test(suite, name, t, loc);
-            return *this;
-        }
-        template<test_function TF>
-        auto test(TF t, source_location const &loc = source_location::current())
-                const {
-            register_test(suite, {}, t, loc);
-            return *this;
-        }
-
         template<test_function... TF>
         auto test(char const *name, TF... ts) const {
-            (register_test(suite, name, ts, source_location::current()), ...);
+            (register_test(suite, name, ts), ...);
             return *this;
         }
         template<test_function... TF>
         auto test(TF... ts) const {
-            (register_test(suite, {}, ts, source_location::current()), ...);
+            (register_test(suite, {}, ts), ...);
             return *this;
         }
     };

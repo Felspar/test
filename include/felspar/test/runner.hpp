@@ -11,19 +11,12 @@ namespace felspar::test {
 
     /// Used by the test runner to fetch tests and run them.
     class test_case {
-        friend void register_test(
-                std::string_view,
-                std::string,
-                test_function_ptr,
-                source_location const &);
+        friend void
+                register_test(std::string_view, std::string, test_function_ptr);
 
         test_function_ptr test;
 
-        test_case(
-                std::string_view s,
-                std::string n,
-                test_function_ptr f,
-                source_location const &)
+        test_case(std::string_view s, std::string n, test_function_ptr f)
         : test{f}, suite{s}, name{std::move(n)} {}
 
       public:
