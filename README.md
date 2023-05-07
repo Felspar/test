@@ -190,7 +190,7 @@ The second form, `throws_type`, only checks that an exception can be caught usin
 If the types used in an expression are printable to a `std::ostream<char>` then this is used to generate a failure message. For example `check(4) != 4` could be reported as:
 
     maths:7 ... FAIL :-(
-    != failed at ../../test/tests.cpp:69:0
+    Failed at ../../test/tests.cpp:69:0
     check(4) != 4
 
 If the type doesn't support printing then it will be shown as `?? unprintable ??` instead.
