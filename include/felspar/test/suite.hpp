@@ -18,64 +18,70 @@ namespace felspar::test {
 
 
     void register_test(
-            std::string_view suite,
-            std::string_view test,
-            test_function_ptr,
-            source_location);
+            std::string_view suite, std::string test, test_function_ptr);
     inline void register_test(
             std::string_view suite,
-            std::string_view test,
-            test_check_log_function f,
-            source_location loc) {
+            std::string test,
+            test_check_log_function f) {
         register_test(
-                suite, test,
-                [f](std::ostream &l, test::injected c) { f(c, l); }, loc);
+                suite, std::move(test),
+                [f](std::ostream &l, test::injected c) { f(c, l); });
     }
     inline void register_test(
-            std::string_view suite,
-            std::string_view test,
-            test_check_function f,
-            source_location loc) {
+            std::string_view suite, std::string test, test_check_function f) {
         register_test(
-                suite, test, [f](std::ostream &, test::injected c) { f(c); },
-                loc);
+                suite, std::move(test),
+                [f](std::ostream &, test::injected c) { f(c); });
     }
     inline void register_test(
-            std::string_view suite,
-            std::string_view test,
-            test_nullary_function f,
-            source_location loc) {
+            std::string_view suite, std::string test, test_nullary_function f) {
         register_test(
-                suite, test, [f](std::ostream &, test::injected) { f(); }, loc);
+                suite, std::move(test),
+                [f](std::ostream &, test::injected) { f(); });
     }
 
 
     template<typename F>
-    concept test_function =
-            requires(F f, std::string_view sv, source_location loc) {
-                register_test(sv, sv, f, loc);
-            };
+    concept test_function = requires(F f, std::string_view sv, std::string s) {
+                                register_test(sv, s, f);
+                            };
 
 
-    template<typename F>
-    struct part {
-        template<typename V>
-        part(V, source_location = source_location::current()) {}
-    };
     struct registration {
         std::string_view const suite;
+
         template<test_function TF>
-        auto
-                test(char const *name,
-                     TF t,
-                     source_location loc = source_location::current()) const {
-            register_test(suite, name, t, loc);
+        auto test(char const *name, TF t) const {
+            register_test(suite, name, t);
             return *this;
         }
         template<test_function TF>
-        auto test(TF t, source_location loc = source_location::current()) const {
-            register_test(suite, {}, t, loc);
+        auto test(TF t) const {
+            register_test(suite, {}, t);
             return *this;
+        }
+        template<test_function TF, test_function... TFs>
+        auto test(char const *name, TF t, TFs... ts) const {
+            rt(name, std::tuple{t, ts...},
+               std::make_index_sequence<sizeof...(TFs) + 1>{});
+            return *this;
+        }
+        template<test_function TF, test_function... TFs>
+        auto test(TF t, TFs... ts) const {
+            register_test(suite, {}, t);
+            (register_test(suite, {}, ts), ...);
+            return *this;
+        }
+
+      private:
+        template<test_function... TFs, std::size_t... I>
+        void rt(const char *n,
+                std::tuple<TFs...> ts,
+                std::index_sequence<I...>) const {
+            (register_test(
+                     suite, std::string{n} + "/" + std::to_string(I + 1),
+                     std::get<I>(ts)),
+             ...);
         }
     };
 

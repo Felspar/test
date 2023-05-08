@@ -7,8 +7,8 @@
 namespace {
 
 
-    static auto const unary = felspar::testsuite(
-            "checks...unary",
+    static auto const unary = felspar::testsuite("checks").test(
+            "unary",
             [](auto check) { check(true); },
             [](auto check) {
                 auto const *ptr = "";
@@ -18,7 +18,7 @@ namespace {
             });
 
     static auto const binary =
-            felspar::testsuite("checks...binary")
+            felspar::testsuite("checks:binary")
                     .test("==",
                           [](auto check) {
                               check(1) == 1;
@@ -67,8 +67,7 @@ namespace {
 
 
     [[noreturn]] void thrower() { throw std::runtime_error{"An exception"}; }
-    auto const throws = felspar::testsuite(
-            "throws",
+    auto const throws = felspar::testsuite("throws").test(
             [](auto check) {
                 check([]() {
                     thrower();
