@@ -1,7 +1,12 @@
 # Felspar Test
 
 
-**Testing framework with cmake integration for C++20**
+**Testing framework with cmake integration for C++**
+
+[![Documentation](https://badgen.net/static/docs/felspar.com)](https://felspar.com/test/)
+[![GitHub](https://badgen.net/badge/Github/felspar-test/green?icon=github)](https://github.com/Felspar/test)
+[![License](https://badgen.net/github/license/Felspar/test)](https://github.com/Felspar/test/blob/main/LICENSE_1_0.txt)
+[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/tKSabUa52v)
 
 The framework is easy to use from your `CMakeLists.txt` and tests can be run as part of your normal build with no extra steps needed. The tests are also easy to write using standard C++ syntax and operators with no macros to memorize.
 
