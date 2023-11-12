@@ -1,7 +1,22 @@
 #pragma once
 
 
-#if __has_include(<experimental/source_location>)
+#if __has_include(<source_location>)
+
+
+#include <source_location>
+
+
+namespace felspar {
+
+
+    using source_location = std::source_location;
+
+
+}
+
+
+#elif __has_include(<experimental/source_location>)
 
 
 #include <experimental/source_location>
