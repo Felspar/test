@@ -3,6 +3,7 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
+#include <algorithm>
 
 
 #ifndef FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS
