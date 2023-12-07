@@ -3,6 +3,12 @@ project(felspar-test LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 
+include(CheckCXXSymbolExists)
+
+check_cxx_symbol_exists(__cpp_lib_clamp "version" have_clamp)
+if(NOT have_clamp)
+  message(WARNING "felspar-test requires std::clamp")
+endif()
 
 option(FELSPAR_CHECK_TESTS "Turn off to stop tests from being built and run" ON)
 if(FELSPAR_CHECK_TESTS AND NOT TARGET felspar-check)
