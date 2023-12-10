@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.14...3.28)
 project(felspar-test LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
-
 include(CheckCXXSymbolExists)
 
 check_cxx_symbol_exists(__cpp_lib_clamp "version" have_clamp)
