@@ -31,8 +31,8 @@ namespace felspar::test {
      */
     template<typename T>
     concept stream_printable = requires(T const t, std::stringstream os) {
-                                   { os << t };
-                               };
+        { os << t };
+    };
 
     template<typename V>
     inline std::string_view value_string(V const &) {

@@ -43,8 +43,8 @@ namespace felspar::test {
 
     template<typename F>
     concept test_function = requires(F f, std::string_view sv, std::string s) {
-                                register_test(sv, s, f);
-                            };
+        register_test(sv, s, f);
+    };
 
 
     struct registration {
