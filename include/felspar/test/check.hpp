@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include <exception>
 #include <type_traits>
 
 #include <felspar/test/report.hpp>

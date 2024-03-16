@@ -4,6 +4,7 @@
 #include <felspar/test/suite.hpp>
 
 #include <chrono>
+#include <exception>
 
 
 namespace felspar::test {
