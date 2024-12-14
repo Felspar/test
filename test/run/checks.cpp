@@ -95,7 +95,7 @@ namespace {
             [](auto check) {
                 std::vector<std::string> ss;
                 check([&]() {
-                    ss.at(1);
+                    (void)ss.at(1);
                 }).template throws_type<std::out_of_range>();
             });
 
