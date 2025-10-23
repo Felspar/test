@@ -95,6 +95,12 @@ namespace felspar::test {
                 source_location const &loc = source_location::current()) const {
             return checks<V>{*this, std::forward<V>(v), loc};
         }
+        template<testable_value V>
+        [[noreturn]] void failed(
+                V &&v,
+                source_location const &loc = source_location::current()) const {
+            throw_failure(loc, "failed", std::forward<V>(v));
+        }
     };
 
 
