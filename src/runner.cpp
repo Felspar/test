@@ -23,6 +23,8 @@ std::string felspar::test::format_failure_message(
     if (not first.empty()) {
         m << "\n    check(" << first << ") " << op;
         if (not second.empty()) { m << ' ' << second; }
+    } else if (not op.empty()) {
+        m << "\n    " << op;
     }
     return m.str();
 }

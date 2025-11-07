@@ -70,8 +70,17 @@ namespace felspar::test {
             bool passed{false};
             try {
                 value();
-            } catch (E const &) { passed = true; }
-            if (not passed) { throw_failure(source, "throws"); }
+            } catch (E const &) {
+                passed = true;
+            } catch (test_failure const &) {
+                throw;
+            } catch (std::exception const &e) {
+                throw_failure(
+                        source,
+                        std::string{"The wrong exception was caught\n"}
+                                + e.what());
+            } catch (...) { throw_failure(source, "Unknown exception"); }
+            if (not passed) { throw_failure(source, "No exception thrown"); }
         }
 
         auto is_truthy() const {
