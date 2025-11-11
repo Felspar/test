@@ -1,11 +1,10 @@
 #pragma once
 
 
+#include <source_location>
 #include <sstream>
 #include <string>
 #include <string_view>
-
-#include <felspar/test/source.hpp>
 
 
 namespace felspar::test {
@@ -59,7 +58,7 @@ namespace felspar::test {
 
     /// Default reporting which also throws the exception.
     [[noreturn]] inline auto throw_failure(
-            source_location s,
+            std::source_location s,
             std::string_view op,
             std::string_view vl = std::string_view{},
             std::string_view vr = std::string_view{}) {

@@ -21,10 +21,10 @@ namespace felspar::test {
     struct checks {
         injected const &check;
         std::remove_cv_t<V> value;
-        source_location source;
+        std::source_location source;
 
         template<typename X>
-        checks(injected const &c, X &&v, source_location const &l)
+        checks(injected const &c, X &&v, std::source_location const &l)
         : check{c}, value{std::forward<X>(v)}, source{l} {}
 
         template<typename C>
@@ -62,9 +62,10 @@ namespace felspar::test {
 
         /// Other supported checks
         template<typename E>
-        auto throws(
-                E const &v,
-                source_location const &loc = source_location::current()) const;
+        auto
+                throws(E const &v,
+                       std::source_location const &loc =
+                               std::source_location::current()) const;
         template<typename E>
         auto throws_type() const {
             bool passed{false};
@@ -101,13 +102,15 @@ namespace felspar::test {
         template<testable_value V>
         auto operator()(
                 V &&v,
-                source_location const &loc = source_location::current()) const {
+                std::source_location const &loc =
+                        std::source_location::current()) const {
             return checks<V>{*this, std::forward<V>(v), loc};
         }
         template<testable_value V>
-        [[noreturn]] void failed(
-                V &&v,
-                source_location const &loc = source_location::current()) const {
+        [[noreturn]] void
+                failed(V &&v,
+                       std::source_location const &loc =
+                               std::source_location::current()) const {
             throw_failure(loc, "failed", std::forward<V>(v));
         }
     };
@@ -115,7 +118,8 @@ namespace felspar::test {
 
     template<typename V>
     template<typename E>
-    inline auto checks<V>::throws(E const &v, source_location const &loc) const {
+    inline auto checks<V>::throws(
+            E const &v, std::source_location const &loc) const {
         try {
             value();
         } catch (E &e) {
