@@ -1,9 +1,16 @@
 #include <felspar/test/runner.hpp>
 
+#include <algorithm>
 #include <chrono>
+#include <cstdlib>
 #include <iostream>
 #include <thread>
-#include <algorithm>
+
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#endif
 
 
 #ifndef FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS
@@ -51,8 +58,21 @@ int main() {
         constexpr std::chrono::seconds timeout{
                 FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS};
         std::this_thread::sleep_for(timeout);
-        std::cerr << "\n\nTiming out after " << timestr(timeout) << '\n';
-        std::exit(127);
+        std::cerr << "\n\nTiming out after " << timestr(timeout) << std::endl;
+        /**
+         * A watchdog must terminate without running `atexit` handlers,
+         * static destructors, or stream flushes. That ordered shutdown is
+         * unsafe to run from this thread while the main thread is wedged in a
+         * blocking call, and on Windows it deadlocks during teardown so the
+         * process never exits. Kill the process outright instead. The message
+         * above is flushed with `std::endl` since nothing here will flush it
+         * for us.
+         */
+#ifdef _WIN32
+        ::TerminateProcess(::GetCurrentProcess(), 127);
+#else
+        std::_Exit(127);
+#endif
     }}.detach();
     std::size_t number{}, pass{}, fail{};
     for (auto const &test : felspar::test::all_test_cases()) {
