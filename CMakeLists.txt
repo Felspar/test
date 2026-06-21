@@ -26,13 +26,13 @@ function(add_test_run test_target)
             add_executable(${name} EXCLUDE_FROM_ALL ${arg})
             target_link_libraries(${name} PRIVATE ${deps})
             target_include_directories(${name} PRIVATE ${PROJECT_SOURCE_DIR}/include)
-            # This test isn't great, but it does work for mingw64
-            if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows"
-                    AND NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
-                add_custom_command(TARGET ${name} POST_BUILD COMMAND ./${name}.exe)
-            else()
-                add_custom_command(TARGET ${name} POST_BUILD COMMAND ${name})
-            endif()
+            # Run the test as a post-build step. CMAKE_CROSSCOMPILING_EMULATOR
+            # is empty for native builds (the test runs directly) and the wine
+            # wrapper for the mingw cross build, so cross-built test `.exe`s run
+            # on the host. $<TARGET_FILE> resolves the right path (with `.exe` on
+            # Windows) in every case.
+            add_custom_command(TARGET ${name} POST_BUILD
+                COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:${name}>)
             add_dependencies(${test_target} ${name})
             add_test(NAME ${name}-ctest COMMAND ${name})
         elseif(arg STREQUAL "TESTS")

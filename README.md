@@ -75,6 +75,8 @@ add_test_run(check your-library test-helpers TESTS checks1.cpp checks2.cpp)
 
 Anything you add between the test target name and the `TESTS` word will be linked with the test executable.
 
+When you cross-compile, the tests can still run as part of the build -- on the build host, through an emulator that you provide. See [cross-compiling.md](cross-compiling.md).
+
 
 ## Writing tests
 
