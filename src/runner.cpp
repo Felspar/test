@@ -1,6 +1,7 @@
 #include <felspar/test/runner.hpp>
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
@@ -42,6 +43,16 @@ std::string felspar::test::format_failure_message(
 
 
 namespace {
+    std::chrono::seconds constexpr timeout{FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS};
+
+    /**
+     * The point in time at which the watchdog will kill the process. Storing
+     * a new value extends (or shortens) the deadline -- the watchdog polls it
+     * every second rather than sleeping for the whole timeout. It is always
+     * set to `timeout` past the moment it was last reset.
+     */
+    std::atomic<std::chrono::steady_clock::time_point> deadline;
+
     inline std::string timestr(std::chrono::nanoseconds ns) {
         using namespace std::literals;
         if (ns < 1us) {
@@ -58,11 +69,17 @@ namespace {
 
 
 int main() {
-    std::thread{[]() {
-        constexpr std::chrono::seconds timeout{
-                FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS};
-        std::this_thread::sleep_for(timeout);
-        std::cerr << "\n\nTiming out after " << timestr(timeout) << std::endl;
+    auto const started = std::chrono::steady_clock::now();
+    deadline.store(started + timeout);
+    std::thread{[started]() {
+        while (std::chrono::steady_clock::now() < deadline.load()) {
+            std::this_thread::sleep_for(std::chrono::seconds{1});
+        }
+        auto const now = std::chrono::steady_clock::now();
+        std::cerr << "\n\nTiming out after "
+                  << timestr(now - deadline.load() + timeout)
+                  << " with total runtime " << timestr(now - started)
+                  << std::endl;
         /**
          * A watchdog must terminate without running `atexit` handlers,
          * static destructors, or stream flushes. That ordered shutdown is
@@ -103,6 +120,7 @@ int main() {
             } catch (...) { std::cerr << "\nUnknown exception type"; }
         };
         std::cout << '\n';
+        deadline.store(std::chrono::steady_clock::now() + timeout);
     }
     std::cout << (pass + fail) << " tests run, " << pass << " passed";
     if (fail) {
