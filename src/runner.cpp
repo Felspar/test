@@ -1,6 +1,7 @@
 #include <felspar/test/runner.hpp>
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
@@ -42,6 +43,13 @@ std::string felspar::test::format_failure_message(
 
 
 namespace {
+    /**
+     * The point in time at which the watchdog will kill the process. Storing
+     * a new value extends (or shortens) the deadline -- the watchdog polls it
+     * every second rather than sleeping for the whole timeout.
+     */
+    std::atomic<std::chrono::steady_clock::time_point> deadline;
+
     inline std::string timestr(std::chrono::nanoseconds ns) {
         using namespace std::literals;
         if (ns < 1us) {
@@ -58,11 +66,16 @@ namespace {
 
 
 int main() {
-    std::thread{[]() {
-        constexpr std::chrono::seconds timeout{
-                FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS};
-        std::this_thread::sleep_for(timeout);
-        std::cerr << "\n\nTiming out after " << timestr(timeout) << std::endl;
+    std::chrono::seconds constexpr timeout{FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS};
+    auto const started = std::chrono::steady_clock::now();
+    deadline.store(started + timeout);
+    std::thread{[started]() {
+        while (std::chrono::steady_clock::now() < deadline.load()) {
+            std::this_thread::sleep_for(std::chrono::seconds{1});
+        }
+        std::cerr << "\n\nTiming out after "
+                  << timestr(std::chrono::steady_clock::now() - started)
+                  << std::endl;
         /**
          * A watchdog must terminate without running `atexit` handlers,
          * static destructors, or stream flushes. That ordered shutdown is
