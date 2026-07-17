@@ -116,6 +116,7 @@ int main() {
             } catch (...) { std::cerr << "\nUnknown exception type"; }
         };
         std::cout << '\n';
+        deadline.store(std::chrono::steady_clock::now() + timeout);
     }
     std::cout << (pass + fail) << " tests run, " << pass << " passed";
     if (fail) {
