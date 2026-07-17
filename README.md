@@ -201,7 +201,7 @@ If the type doesn't support printing then it will be shown as `?? unprintable ??
 
 ## Time outs
 
-By default the test runner will time out after 30 seconds. To increase this number define the pre-processor symbol `FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS` to a higher (or, if you want, a smaller) number in your build configuration for the tests.
+The test runner has a watchdog which will kill the process (with exit code 127) if any single test runs for more than 30 seconds -- the deadline is reset after each test completes, so the limit applies per test rather than to the whole run. The time out message reports both how long the stuck test ran for and the total runtime of the test binary. To change the limit define the pre-processor symbol `FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS` to a higher (or, if you want, a smaller) number in your build configuration for the tests.
 
 
 ## TODO
