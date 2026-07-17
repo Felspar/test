@@ -43,10 +43,13 @@ std::string felspar::test::format_failure_message(
 
 
 namespace {
+    std::chrono::seconds constexpr timeout{FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS};
+
     /**
      * The point in time at which the watchdog will kill the process. Storing
      * a new value extends (or shortens) the deadline -- the watchdog polls it
-     * every second rather than sleeping for the whole timeout.
+     * every second rather than sleeping for the whole timeout. It is always
+     * set to `timeout` past the moment it was last reset.
      */
     std::atomic<std::chrono::steady_clock::time_point> deadline;
 
@@ -66,15 +69,16 @@ namespace {
 
 
 int main() {
-    std::chrono::seconds constexpr timeout{FELSPAR_TEST_RUNNER_TIMEOUT_SECONDS};
     auto const started = std::chrono::steady_clock::now();
     deadline.store(started + timeout);
     std::thread{[started]() {
         while (std::chrono::steady_clock::now() < deadline.load()) {
             std::this_thread::sleep_for(std::chrono::seconds{1});
         }
+        auto const now = std::chrono::steady_clock::now();
         std::cerr << "\n\nTiming out after "
-                  << timestr(std::chrono::steady_clock::now() - started)
+                  << timestr(now - deadline.load() + timeout)
+                  << " with total runtime " << timestr(now - started)
                   << std::endl;
         /**
          * A watchdog must terminate without running `atexit` handlers,
