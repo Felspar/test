@@ -16,6 +16,27 @@ if(FELSPAR_CHECK_TESTS AND NOT TARGET felspar-check)
 endif()
 
 
+# The thread sanitizer symbolizes its reports by forking llvm-symbolizer, which
+# on some Linux hosts (seen with LLVM 21) never answers -- the reporting thread
+# blocks on the pipe holding a sanitizer lock, so every other thread stops
+# behind it and the run reaches the test runner's 30s timeout having printed
+# nothing. A race then looks exactly like a deadlock in the code under test.
+# The sanitizers speak addr2line's protocol too, and that path does not hang, so
+# the report arrives complete with file and line. Set for every test run rather
+# than the tsan trees alone: the trees built without it never read TSAN_OPTIONS.
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    find_program(FELSPAR_ADDR2LINE addr2line)
+    if(FELSPAR_ADDR2LINE)
+        set(FELSPAR_TEST_TSAN_OPTIONS
+            "TSAN_OPTIONS=external_symbolizer_path=${FELSPAR_ADDR2LINE}"
+            CACHE INTERNAL "Sanitizer settings each test run is made under")
+        set(FELSPAR_TEST_RUN_ENV
+            ${CMAKE_COMMAND} -E env ${FELSPAR_TEST_TSAN_OPTIONS}
+            CACHE INTERNAL "Command prefix putting a test run in that environment")
+    endif()
+endif()
+
+
 function(add_test_run test_target)
     set(seen-tests OFF)
     set(deps felspar-test-runner)
@@ -30,11 +51,18 @@ function(add_test_run test_target)
             # is empty for native builds (the test runs directly) and the wine
             # wrapper for the mingw cross build, so cross-built test `.exe`s run
             # on the host. $<TARGET_FILE> resolves the right path (with `.exe` on
-            # Windows) in every case.
+            # Windows) in every case. FELSPAR_TEST_RUN_ENV is empty unless the
+            # sanitizer symbolizer above needed redirecting.
             add_custom_command(TARGET ${name} POST_BUILD
-                COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:${name}>)
+                COMMAND ${FELSPAR_TEST_RUN_ENV} ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:${name}>)
             add_dependencies(${test_target} ${name})
+            # The same run, reached through ctest rather than the build, needs
+            # the same environment.
             add_test(NAME ${name}-ctest COMMAND ${name})
+            if(FELSPAR_TEST_TSAN_OPTIONS)
+                set_tests_properties(${name}-ctest PROPERTIES
+                    ENVIRONMENT "${FELSPAR_TEST_TSAN_OPTIONS}")
+            endif()
         elseif(arg STREQUAL "TESTS")
             set(seen-tests ON)
         else()
